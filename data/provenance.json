@@ -1,0 +1,20 @@
+{
+  "delivery_records": 260920,
+  "coverage": "2008-2024",
+  "files": [
+    {
+      "file": "deliveries.csv",
+      "sha256": "142236ea52950795dab266d4aa392c7645bd1a0db4704f0b8058afd96e24e2c2",
+      "bytes": 27019953
+    },
+    {
+      "file": "matches.csv",
+      "sha256": "8a0394246d2a76b44526565f2245d8f4feff91babe57ab16676a2c3d67aa0846",
+      "bytes": 225266
+    }
+  ],
+  "download_url": "https://www.kaggle.com/api/v1/datasets/download/patrickb1912/ipl-complete-dataset-20082020",
+  "source": "https://www.kaggle.com/datasets/patrickb1912/ipl-complete-dataset-20082020",
+  "downloaded_on": "2026-09-13",
+  "matches": 1095
+}
