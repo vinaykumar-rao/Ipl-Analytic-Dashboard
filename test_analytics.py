@@ -11,12 +11,21 @@ class AnalyticsTests(unittest.TestCase):
     def test_snapshot_and_seasons(self):
         self.assertEqual(len(self.m), 1095)
         self.assertEqual(len(self.d), 260920)
-        self.assertEqual(sorted(self.m.season.unique()), list(range(2008, 2025)))
-        self.assertEqual(len(self.m[self.m.match_type.eq('Final')]), 17)
+        self.assertEqual(
+            sorted(self.m.season.unique()),
+            list(range(2008, 2025))
+        )
+        self.assertEqual(
+            len(self.m[self.m.match_type.eq('Final')]),
+            17
+        )
 
     def test_first_match_known_score(self):
         # McCullum's 158 off 73 in the opening IPL match is an independent control.
-        p = self.d[self.d.match_id.eq(335982) & self.d.batter.eq('BB McCullum')]
+        p = self.d[
+            self.d.match_id.eq(335982)
+            & self.d.batter.eq('BB McCullum')
+        ]
         stats = batting(p).iloc[0]
         self.assertEqual(stats.Runs, 158)
         self.assertEqual(stats.Balls, 73)
@@ -24,7 +33,7 @@ class AnalyticsTests(unittest.TestCase):
 
     def test_extras_and_dismissal_rules(self):
         raw_m = pd.read_csv('data/matches.csv').head(1)
-        row = pd.read_csv('data/deliveries.csv', nrows=1)
+        row = pd.read_csv('data/deliveries.csv.gz', nrows=1)
         balls = pd.concat([row] * 4, ignore_index=True)
         balls['extras_type'] = ['wides', 'noballs', 'byes', '']
         balls['extra_runs'] = [1, 1, 4, 0]
@@ -39,16 +48,25 @@ class AnalyticsTests(unittest.TestCase):
         self.assertEqual(bowling(d).iloc[0].Economy, 24)
 
     def test_filter_and_super_over(self):
-        m, d = filter_data(self.m, self.d, [2024], 'Chennai Super Kings')
+        m, d = filter_data(
+            self.m, self.d, [2024], 'Chennai Super Kings'
+        )
         self.assertTrue(m.season.eq(2024).all())
-        self.assertTrue((m.team1.eq('Chennai Super Kings') | m.team2.eq('Chennai Super Kings')).all())
+        self.assertTrue(
+            (
+                m.team1.eq('Chennai Super Kings')
+                | m.team2.eq('Chennai Super Kings')
+            ).all()
+        )
         self.assertTrue(d.match_id.isin(m.id).all())
         self.assertTrue(d.inning.le(2).all())
-        self.assertTrue(filter_data(self.m, self.d, [1900])[1].empty)
+        self.assertTrue(
+            filter_data(self.m, self.d, [1900])[1].empty
+        )
 
     def test_reject_unmatched_pair(self):
         m = pd.read_csv('data/matches.csv').head(1)
-        d = pd.read_csv('data/deliveries.csv', nrows=1)
+        d = pd.read_csv('data/deliveries.csv.gz', nrows=1)
         d['match_id'] = -1
         with self.assertRaisesRegex(ValueError, 'matching match ID'):
             prepare(m, d)
