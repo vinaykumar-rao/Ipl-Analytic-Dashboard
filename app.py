@@ -16,7 +16,7 @@ def prepare(matches, deliveries):
     required_m = {'id', 'date', 'team1', 'team2', 'winner', 'match_type', 'venue', 'result'}
     required_d = {'match_id', 'inning', 'over', 'batter', 'bowler', 'batsman_runs', 'total_runs',
                   'extra_runs', 'extras_type', 'dismissal_kind', 'is_wicket', 'batting_team', 'bowling_team'}
-    for frame, required, label in [(m, required_m, 'matches.csv'), (d, required_d, 'deliveries.csv')]:
+    for frame, required, label in [(m, required_m, 'matches.csv'), (d, required_d, 'deliveries.csv.gz')]:
         missing = required - set(frame.columns)
         if missing:
             raise ValueError(f'{label} is missing columns: {", ".join(sorted(missing))}.')
@@ -52,7 +52,7 @@ def prepare(matches, deliveries):
     return m, d
 
 def load_data():
-    return prepare(pd.read_csv(ROOT / 'data/matches.csv'), pd.read_csv(ROOT / 'data/deliveries.csv'))
+    return prepare(pd.read_csv(ROOT / 'data/matches.csv'), pd.read_csv(ROOT / 'data/deliveries.csv.gz'))
 
 def batting(d, keys=None):
     keys = keys or ['batter']
@@ -159,7 +159,7 @@ with st.sidebar:
         matches, deliveries = bundled()
     except (ValueError, OSError, pd.errors.ParserError) as exc:
         st.error(str(exc))
-        st.info('Place matches.csv and deliveries.csv in the data folder and restart.')
+        st.info('Place matches.csv and deliveries.csv.gz in the data folder and restart.')
         st.stop()
     seasons = sorted(matches.season.unique().tolist())
     st.selectbox('Season', seasons, index=None, placeholder='Choose a year to see the winner', key='season', on_change=choose_season)
